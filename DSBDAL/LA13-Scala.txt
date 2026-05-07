@@ -1,0 +1,33 @@
+import scala.io.StdIn.readLine
+
+object Main {
+
+  // 1. Even check
+  def checkEven(num: Int): Boolean = num % 2 == 0
+
+  // 2. Palindrome check
+  def palindromeCheck(st: String): Boolean = st == st.reverse
+
+  // 3. Lucky sum
+  def lucky(nums: List[Int]): Int =
+    nums.map(n => if (n == 7) 14 else n).sum
+
+  def main(args: Array[String]): Unit = {
+
+    // Even check
+    println("Enter a number:")
+    val num = readLine().toInt
+    println("Is even: " + checkEven(num))
+
+    // Palindrome check
+    println("Enter a string:")
+    val str = readLine()
+    println("Is palindrome: " + palindromeCheck(str))
+
+    // Lucky sum
+    println("Enter numbers separated by space:")
+    val input = readLine()
+    val nums = input.split(" ").map(_.toInt).toList
+    println("Lucky sum: " + lucky(nums))
+  }
+}
