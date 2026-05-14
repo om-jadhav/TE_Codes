@@ -1,43 +1,50 @@
-from flask import Flask, request, jsonify
-import time
-from google import genai
+# redbus_chatbot.py
 
-# ✅ Initialize API client
-client = genai.Client()
+print("Welcome to RedBus Chatbot")
+print("Type 'exit' to quit\n")
 
-app = Flask(__name__)
+while True:
+    user_input = input("You: ").lower()
 
-# ✅ Chat API (No DB, No UI)
-@app.route("/chat", methods=["POST"])
-def chat():
-    data = request.get_json()
-    user_input = data.get("message") if data else None
+    # Exit
+    if user_input == "exit":
+        print("Bot: Thank you for using RedBus Chatbot!")
+        break
 
-    if not user_input:
-        return jsonify({"reply": "❌ No message received"}), 400
+    # Greetings
+    elif any(word in user_input for word in ["hello", "hi", "hey"]):
+        print("Bot: Hello! How can I help you with your bus booking?")
 
-    for attempt in range(3):
-        try:
-            response = client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=f"You are a help desk assistant. Give short helpful answers.\nUser: {user_input}"
-            )
+    # Booking buses
+    elif any(word in user_input for word in ["book", "ticket", "bus"]):
+        source = input("Bot: Enter source city: ")
+        destination = input("Bot: Enter destination city: ")
+        date = input("Bot: Enter travel date: ")
 
-            reply = response.text if response.text else "⚠️ No response from AI."
+        print(f"\nBot: Searching buses from {source} to {destination} on {date}...")
+        print("Bot: Found 5 available buses.")
+        print("Bot: Ticket booking successful!\n")
 
-            return jsonify({"reply": reply})
+    # Cancel ticket
+    elif "cancel" in user_input:
+        booking_id = input("Bot: Enter booking ID: ")
+        print(f"Bot: Booking {booking_id} has been cancelled.")
 
-        except Exception as e:
-            print(f"Attempt {attempt+1} failed:", e)
-            time.sleep(2)
+    # Check ticket status
+    elif any(word in user_input for word in ["status", "pnr"]):
+        booking_id = input("Bot: Enter booking ID: ")
+        print(f"Bot: Booking {booking_id} is confirmed.")
 
-    return jsonify({
-        "reply": "⚠️ Server is busy. Please try again later."
-    }), 200
+    # Help
+    elif "help" in user_input:
+        print("""
+Bot Commands:
+- book bus
+- cancel ticket
+- check status
+- exit
+""")
 
-
-# ▶️ Run app
-if __name__ == "__main__":
-    app.run(debug=True)
-
-     # $env:GEMINI_API_KEY="AIzaSyBvbJEhP6HBVP3vCExleetOtXrNWRjZ9AM"
+    # Unknown message
+    else:
+        print("Bot: Sorry, I didn't understand that.")
